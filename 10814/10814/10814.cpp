@@ -7,7 +7,7 @@
 using namespace std;
 
 // 나이가 적은 수부터 차례로 정렬하는 함수
-bool com(pair<int,string> a,pair<int,string> b) {
+bool com(pair<int, string> a, pair<int, string> b) {
 	return a.first < b.first;
 }
 
