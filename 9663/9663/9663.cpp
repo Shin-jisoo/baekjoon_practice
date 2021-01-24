@@ -1,40 +1,43 @@
 #include <iostream>
-#define MAX 15
+#include <bits/stdc++.h>
+
 using namespace std;
 
-int col[MAX];
-int N, total = 0;
+int N;
+int vx[16], vy[16];
 
-// level 은 현재 몇번째 행을 채우고 있는지 기록
-bool check(int level) {
-	for (int i = 0;i < level;i++)
+int go(int y, int x) {
 
-		if (col[i] == col[level] // 새로운 퀸과 기존의 퀸이 같은 행에 있거나
-			|| abs(col[level] - col[i]) == level - i) // 대각선에 있는 경우
-			return false; // false
-
-		return true; // 아닌 경우 true
-	
-}
-
-void nqueen(int x) {
-
-	// 마지막에는 total 하나 올려주고 끝
-	if (x == N)
-		total++;
-
-	else {
-		for (int i = 0;i < N;i++) {
-			col[x] = i; // 퀸의 좌표 지정
-			if (check(x)) // true 인 경우 자리 배치
-				nqueen(x + 1); // 다음 퀸의 자리 지정하기 위한 재귀함수 호출
-			                   // 유효하지 않다면 다른 위치로 배치
-		}
+	for (int i = 0;i < y;i++) {
+		if (x == vx[i]) return 0; //세로끼리 겹침
+		if (y == vy[i]) return 0; //가로끼리 겹침
+		if (abs(x - vx[i]) == abs(y - vy[i])) return 0; //대각선 겹침
 	}
+
+	//종료 조건
+	if (y == N - 1) {
+		return 1;
+	}
+
+	vx[x] = x;
+	vy[y] = y;
+
+	int r = 0;
+	for (int i = 0;i < N;i++) {
+		r += go(y + 1, i);
+	}
+	return r;
 }
 
 int main() {
 	cin >> N;
-	nqueen(0);
-	cout << total;
+	//scanf("%d", &N);
+
+	int r = 0;
+	for (int i = 0;i < N;i++) {
+		r += go(0, i);
+	}
+
+	cout << r;
+	return 0;
 }
