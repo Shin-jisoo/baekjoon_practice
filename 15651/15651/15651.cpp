@@ -1,14 +1,14 @@
 #include <iostream>
-#define MAX 9
+#include <algorithm>
 
 using namespace std;
 
 int n, m;
-int arr[MAX] = { 0, };
-bool visited[MAX] = { 0, };
+int arr[8] = { 0, };
+//bool isused[8] = { 0, };
 
-void dfs(int cnt) {
-	if (cnt == m) {
+void func(int num,int k) {
+	if (k == m) {
 		for (int i = 0;i < m;i++) {
 			cout << arr[i] << ' ';
 		}
@@ -16,17 +16,14 @@ void dfs(int cnt) {
 		return;
 	}
 
-	// 같은 수를 여러 번 골라도 되므로
-	// if(!visited[i]) 생략
-	for (int i = 1;i <= n;i++) {
-		visited[i] = true;
-		arr[cnt] = i;
-		dfs(cnt + 1);
-		visited[i] = false;
+	// 비내림차순이므로 num 자리에 i 넣어주기
+	for (int i=num;i <= n;i++) {
+		arr[k] = i;
+		func(i,k + 1);
 	}
 }
 
 int main() {
 	cin >> n >> m;
-	dfs(0);
+	func(1,0);
 }
