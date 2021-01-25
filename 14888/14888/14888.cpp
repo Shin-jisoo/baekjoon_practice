@@ -1,63 +1,62 @@
-#include<iostream>
+#include <iostream>
 
 using namespace std;
+int n;
+int num[11];
+int op[4]; //+,-,*,/
+int MIN = 1000000000;
+int MAX = -1000000000;
 
-int N;
-int operands[11];
-int operators[4];
-int mmin = 100000001;
-int mmax = -1000000001;
 
-void getanswer(int result, int idx) {
+void func(int result,int count) {
 
-	if (idx == N) {
-		if (result > mmax)
-			mmax = result;
-		if (result < mmin)
-			mmin = result;
+	//모든 결과가 result 에 들어가있다
+	if (count == n - 1) {
+		if (MIN > result)
+			MIN = result;
+		if (MAX < result)
+			MAX = result;
 		return;
 	}
 
 	for (int i = 0;i < 4;i++) {
+		//사용하고 싶은 연산자의 카운트가 남아있다면
+		if (op[i] != 0) {
+			--op[i];
+			////////
+			if (i == 0) {
+				//결과값에 다음 항을 더해주기, count 1증가
+				func(result + num[count + 1], count + 1);
+			}
+			else if (i == 1) {
+				func(result - num[count + 1], count + 1);
+			}
+			else if (i == 2) {
+				func(result * num[count + 1], count + 1);
+			}
+			else {
+				func(result / num[count + 1], count + 1);
+			}
 
-		if (operators[i] > 0) {
-
-			// 연산자 개수 줄여줌
-			operators[i]--;
-
-			if (i == 0) 
-				getanswer(result + operands[idx], idx + 1);
-			else if (i == 1) 
-				getanswer(result - operands[idx], idx + 1);
-			else if (i == 2) 
-				getanswer(result * operands[idx], idx + 1);
-			else
-				getanswer(result / operands[idx], idx + 1);
-
-			// 다른 연산자를 사용할 것이므로 줄였던 연산자 개수 늘려줌
-			operators[i]++;
+			++op[i];
 		}
 	}
-	return;
 }
 
 
 int main() {
-	cin >> N;
 
-	// 숫자 입력
-	for (int i = 0;i < N;i++) {
-		cin >> operands[i];
+	cin >> n;
+
+	for (int i = 0;i < n;i++) {
+		cin >> num[i];
 	}
 
-	// 연산자 개수 입력
 	for (int i = 0;i < 4;i++) {
-		cin >> operators[i];
+		cin >> op[i];
 	}
 
-	// 함수 호출
-	getanswer(operands[0], 1);
-	cout << mmax << '\n';
-	cout << mmin;
-
+	func(num[0], 0);
+	cout << MAX << '\n';
+	cout << MIN;
 }
