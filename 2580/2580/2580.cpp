@@ -1,97 +1,95 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#define MAX 9
 
 using namespace std;
 
-int arr[MAX][MAX];
-vector<pair<int, int>> points;
-int cnt = 0;
+int arr[9][9];
+vector<pair<int, int>>p;
 bool found=false;
+int cnt = 0;
 
-bool check(pair<int, int>p) {
-	
-	//3x3 으로 구간 나누기
-	int square_x = p.first / 3;
-	int square_y = p.second / 3;
+bool check(pair<int, int>po) {
+	int group_x = po.first / 3;
+	int group_y = po.second / 3;
 
-	for (int i = 0;i < MAX;i++) {
-		//같은 열 검사
-		if (arr[p.first][i] == arr[p.first][p.second] && i != p.second)
+
+	for (int i = 0;i < 9;i++) {
+		//같은 행에 같은 숫자가 있을 경우
+		if (arr[i][po.second] == arr[po.first][po.second] && i != po.first)
 			return false;
-		//같은 행 검사
-		if (arr[i][p.second] == arr[p.first][p.second] && i != p.first)
+
+		//같은 열에 같은 숫자가 있을 경우
+		if (arr[po.first][i] == arr[po.first][po.second] && i != po.second)
 			return false;
 	}
 
-	//구간 안에서 검사
-	for (int i = 3 * square_x;i < 3 * square_x + 3;i++) {
-		for (int j = 3 * square_y;j < 3 * square_y + 3;j++) {
-			if (arr[i][j] == arr[p.first][p.second]) {
-				if (i != p.first && j != p.second) {
+	//같은 그룹 안에 같은 숫자가 있을 경우
+	for (int i = 3 * group_x;i < 3 * group_x + 3;i++) {
+		for (int j = 3 * group_y;j < 3 * group_y + 3;j++) {
+			if (arr[i][j] == arr[po.first][po.second]) {
+				if (i != po.first && j != po.second)
 					return false;
-				}
 			}
 		}
 	}
 
-	return true;
+	return true; //모두 아닌 경우 true
 }
 
-void sudoku(int N) {
-
-	//0을 다 채웠다면 출력
-	if(N == cnt) {
-		for (int i = 0;i < MAX;i++) {
-			for (int j = 0;j < MAX;j++) {
-				cout << arr[i][j];
-				if (j != 8) {
-					cout << " ";
-				}
+void func(int k) {
+	
+	//0의 개수만큼 다 채웠을 경우
+	if (k == cnt) {
+		for (int i = 0;i < 9;i++) {
+			for (int j = 0;j < 9;j++) {
+				//출력
+				cout << arr[i][j] << " ";
 			}
 			cout << '\n';
 		}
 
-		//완성여부 ture 로 바꾸기
+		//완성 되었다고 표시
 		found = true;
 		return;
 	}
-	
-	//해당 칸에 1~9 까지 넣어보기
-	for (int j = 1;j <= MAX;j++) {
-		arr[points[N].first][points[N].second] = j;
 
-		// check 함수에서 확인 후 true 를 반환하면
-		if (check(points[N]))
+	for (int j = 1;j <= 9;j++) {
 
-			//다음 0 의 위치에 숫자를 넣어주기 위해 재귀함수 호출
-			sudoku(N + 1);
+		//1~9 다 넣어보기
+		arr[p[k].first][p[k].second] = j;
 
-		// 완성하면 끝내기
+		//조건을 다 통과할 경우 다음 번째로 넘어가기
+		if (check(p[k]))
+			func(k + 1);
+
+		//끝났을 경우 종료
 		if (found)
 			return;
 	}
 
-	// 못찾으면 비워두기
-	arr[points[N].first][points[N].second] = 0;
+	//최적해를 못찾을 경우 종료
+	arr[p[k].first][p[k].second] = 0;
 	return;
 }
 
 int main() {
-	pair<int, int>p;
-	for (int i = 0;i < MAX;i++) {
-		for (int j = 0;j < MAX;j++) {
-			cin >> arr[i][j];
 
+	pair<int, int>pp;
+
+	for (int i = 0;i < 9;i++) {
+		for (int j = 0;j < 9;j++) {
+			cin >> arr[i][j];
 			if (arr[i][j] == 0) {
+
+				//0의 개수 카운트
 				cnt++;
-				p.first = i;
-				p.second = j;
-				points.push_back(p);
+				pp.first = i;
+				pp.second = j;
+				p.push_back(pp);
 			}
 		}
 	}
 
-	sudoku(0);
+	func(0);
 }
